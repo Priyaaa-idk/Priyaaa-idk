@@ -5,6 +5,6 @@ I’m not revealing my name (a little mystery never hurts), but I started coding
 This repository has several games I’ve made over time. Some are fun, and some are just plain silly.  They’re all pretty simple, but each one helped me learn something new. I’m still figuring things out, so go easy on the judging. I’m just here to learn, experiment, and have a bit of fun with coding.
 
 ## You can play my games here!
-1. [Play this game](file:///D:/Catch%20Me%20If%20You%20Can!.html)
+1. [Play this game](CatchMeIfYouCan!.html)
 
 2. 
