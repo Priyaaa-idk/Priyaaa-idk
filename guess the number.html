@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Guess the Number Game</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      color: #0077ff;
+    }
+    input {
+      padding: 8px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button {
+      padding: 8px 16px;
+      background-color: #0077ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #005ecb;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 Guess the Number!</h1>
+  <p>I have chosen a number between <b>1</b> and <b>100</b>.</p>
+  <p>Can you guess it?</p>
+
+  <input type="number" id="guess" placeholder="Enter your guess" />
+  <button onclick="checkGuess()">Guess</button>
+
+  <p id="result"></p>
+
+  <script>
+    // Computer chooses a random number
+    let secretNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+
+    function checkGuess() {
+      let guess = document.getElementById("guess").value;
+      attempts++;
+
+      if (guess == secretNumber) {
+        document.getElementById("result").innerHTML =
+          "🎉 Correct! You guessed the number in " + attempts + " tries!";
+      } else if (guess < secretNumber) {
+        document.getElementById("result").innerHTML =
+          "Too low! Try a higher number 🔼";
+      } else {
+        document.getElementById("result").innerHTML =
+          "Too high! Try a lower number 🔽";
+      }
+    }
+  </script>
+</body>
+</html>
