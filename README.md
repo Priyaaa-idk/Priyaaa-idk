@@ -5,5 +5,6 @@ I make simple and easy HTML projects (nothing special about it). I am still lear
 This repository contains some very stupid, interesting fun games which you may or maynot like.
 
 ## You can play my games here!
-1. [Catch Me If You Can!](https://github.com/Priyaaa-idk/Priyaaa-idk/blob/main/CatchMeIfYouCan.html)
+1. [Play Catch Me If You Can](https://github.com/Priyaaa-idk/Priyaaa-idk/blob/main/index.html)
+
 2. 
