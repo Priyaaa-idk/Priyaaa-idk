@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Puzzle Game</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #e3f2ff, #ffffff);
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    h1 {
+      color: #003366;
+      font-size: 36px;
+    }
+
+    #instructions {
+      margin: 20px auto;
+      width: 60%;
+      background: rgba(255, 255, 255, 0.85);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: left;
+      display: inline-block;
+    }
+
+    #instructions h2 {
+      color: #004080;
+      text-align: center;
+    }
+
+    #instructions ul {
+      list-style-type: circle;
+      padding-left: 40px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Cute name box */
+    #name-box {
+      display: none;
+      background: linear-gradient(135deg, #fff4f8, #e1f0ff);
+      width: 300px;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      animation: pop 0.5s ease;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    #name-box h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+
+    #player-input {
+      width: 80%;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      text-align: center;
+      font-size: 16px;
+    }
+
+    #submit-name {
+      margin-top: 10px;
+      background-color: #7baaf7;
+      border: none;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    #submit-name:hover {
+      background-color: #4f90f2;
+    }
+
+    #game-area {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 5px;
+      margin: 20px auto;
+      width: 315px;
+    }
+
+    .tile {
+      background: #ffffff;
+      border: 2px solid #0066cc;
+      font-size: 24px;
+      height: 100px;
+      line-height: 100px;
+      cursor: pointer;
+      user-select: none;
+      border-radius: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .tile:hover {
+      background: #d6eaff;
+      transform: scale(1.05);
+    }
+
+    #message {
+      font-size: 20px;
+      margin-top: 10px;
+      color: #333;
+    }
+
+    #timer {
+      font-size: 18px;
+      margin-top: 10px;
+      color: #d9534f;
+      font-weight: bold;
+    }
+
+    #start-btn {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
+    #start-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>🧩 Simple Puzzle Game</h1>
+
+  <div id="instructions">
+    <h2>How to Play:</h2>
+    <ul>
+      <li>Click the <b>Start Game</b> button below.</li>
+      <li>Enter your name in the cute box that appears.</li>
+      <li>You’ll see a 3×3 number puzzle with one empty tile.</li>
+      <li>Click on tiles next to the empty space to move them.</li>
+      <li>Arrange the numbers from <b>1 to 8</b> before the timer ends.</li>
+      <li>You have <b>20 seconds</b> — be quick!</li>
+    </ul>
+    <center><button id="start-btn">Start Game</button></center>
+  </div>
+
+  <!-- Cute name input box -->
+  <div id="name-box">
+    <h3>💖 Enter Your Name to Begin!</h3>
+    <input type="text" id="player-input" placeholder="Your Name Here" />
+    <br>
+    <button id="submit-name">Let's Go!</button>
+  </div>
+
+  <div id="game-area">
+    <h2 id="player-name"></h2>
+    <div id="timer">Time Left: 20s</div>
+    <div class="grid" id="grid"></div>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById("start-btn");
+    const gameArea = document.getElementById("game-area");
+    const playerNameDisplay = document.getElementById("player-name");
+    const timerDisplay = document.getElementById("timer");
+    const message = document.getElementById("message");
+    const grid = document.getElementById("grid");
+    const instructions = document.getElementById("instructions");
+    const nameBox = document.getElementById("name-box");
+    const playerInput = document.getElementById("player-input");
+    const submitName = document.getElementById("submit-name");
+
+    let tiles = [];
+    let emptyIndex = 8;
+    let timeLeft = 20;
+    let timer;
+
+    function shuffle(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    function createPuzzle() {
+      grid.innerHTML = "";
+      tiles = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+      shuffle(tiles);
+      renderGrid();
+    }
+
+    function renderGrid() {
+      grid.innerHTML = "";
+      tiles.forEach((num, index) => {
+        const div = document.createElement("div");
+        div.className = "tile";
+        div.textContent = num;
+        div.addEventListener("click", () => moveTile(index));
+        grid.appendChild(div);
+        if (num === "") emptyIndex = index;
+      });
+    }
+
+    function moveTile(index) {
+      const validMoves = [index - 1, index + 1, index - 3, index + 3];
+      if (validMoves.includes(emptyIndex)) {
+        [tiles[index], tiles[emptyIndex]] = [tiles[emptyIndex], tiles[index]];
+        renderGrid();
+        checkWin();
+      }
+    }
+
+    function checkWin() {
+      const winOrder = [1, 2, 3, 4, 5, 6, 7, 8, ""];
+      if (JSON.stringify(tiles) === JSON.stringify(winOrder)) {
+        clearInterval(timer);
+        message.textContent = "🎉 You Win!";
+      }
+    }
+
+    function startTimer() {
+      timeLeft = 20;
+      timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          message.textContent = "⏰ Time's Up! You Lose!";
+        }
+      }, 1000);
+    }
+
+    // When Start Game is clicked
+    startBtn.addEventListener("click", () => {
+      instructions.style.display = "none";
+      nameBox.style.display = "block";
+    });
+
+    // When name is submitted
+    submitName.addEventListener("click", () => {
+      const playerName = playerInput.value.trim();
+      if (playerName) {
+        playerNameDisplay.textContent = `Player: ${playerName}`;
+        nameBox.style.display = "none";
+        gameArea.style.display = "block";
+        createPuzzle();
+        startTimer();
+      } else {
+        alert("Please enter your name!");
+      }
+    });
+  </script>
+</body>
+</html>
